@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>bastion3270 — secure TN3270 web gateway and 3270 terminal emulator</title>
+  <meta name="description" content="bastion3270 is an open-source, memory-safe TN3270 / TN3270E web gateway and desktop 3270 terminal emulator written in Rust. Mainframe access from the browser, where password fields never reach the user's device.">
+  <link rel="canonical" href="https://bastion3270.github.io/">
+  <meta name="theme-color" content="#0a0e14">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="bastion3270">
+  <meta property="og:url" content="https://bastion3270.github.io/">
+  <meta property="og:title" content="bastion3270 — secure TN3270 access to the mainframe">
+  <meta property="og:description" content="Open-source TN3270 web gateway and desktop client in Rust. Hidden fields never reach the browser.">
+  <meta property="og:image" content="https://bastion3270.github.io/images/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "bastion3270",
+    "description": "Open-source, memory-safe TN3270 / TN3270E web gateway and desktop 3270 terminal emulator for IBM z/OS, written in Rust.",
+    "url": "https://bastion3270.github.io/",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Windows, macOS, Linux, Kubernetes",
+    "license": "https://www.apache.org/licenses/LICENSE-2.0",
+    "downloadUrl": "https://github.com/tom-danek/bastion3270/releases/latest",
+    "image": "https://bastion3270.github.io/images/web-client.webp",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "sameAs": ["https://github.com/tom-danek/bastion3270"]
+  }
+  </script>
+
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-inner">
+    <a class="brand" href="/" aria-label="bastion3270 home">
+      <img src="/favicon.svg" width="24" height="24" alt="">bastion3270
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#features">Features</a>
+      <a href="#try">Try it</a>
+      <a href="#download">Download</a>
+      <a href="https://github.com/tom-danek/bastion3270#documentation">Docs</a>
+      <a class="nav-gh" href="https://github.com/tom-danek/bastion3270">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Open source · Apache-2.0 · Written in Rust</p>
+      <h1>Secure TN3270 access to the mainframe</h1>
+      <p class="lead">
+        bastion3270 is a TN3270 / TN3270E <strong>web gateway</strong> and <strong>desktop
+        3270 emulator</strong> for IBM&nbsp;z/OS. Users work in a browser tab; the 3270 session
+        runs in the gateway, so passwords typed into hidden fields never reach their device.
+      </p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#try">Try it in five minutes</a>
+        <a class="btn" href="https://github.com/tom-danek/bastion3270/releases/latest">Download</a>
+        <a class="btn" href="https://github.com/tom-danek/bastion3270">View on GitHub</a>
+      </div>
+      <figure class="shot shot-hero">
+        <img src="/images/web-client.webp" width="1280" height="780"
+             alt="The bastion3270 web client in a browser, showing a TSO session on MVS 3.8j with the PF key bar">
+        <figcaption>The web client after a TSO logon, on the Hercules emulator with MVS&nbsp;3.8j.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="why" class="section">
+    <div class="wrap">
+      <h2>Closing the gaps TN3270 leaves open</h2>
+      <div class="grid grid-2">
+        <article class="card">
+          <h3>Hidden fields stay hidden</h3>
+          <p>The gateway runs the session and sends the browser a masked screen. A password
+          typed into the page is not shown, copied, printed or kept there. Protected and
+          numeric fields are enforced in the gateway, not trusted to the client.</p>
+        </article>
+        <article class="card">
+          <h3>TLS that actually connects</h3>
+          <p>Host certificates are checked against the operating system's and your own
+          certificate authorities, with the name rules z/OS certificates need, so encryption
+          is not switched off just because a bank's CA was not deployed.</p>
+        </article>
+        <article class="card">
+          <h3>The gateway decides where sessions go</h3>
+          <p>Users pick an administrator's profile or define their own connection, checked
+          against a policy: an allow-list of hosts, required TLS, or none at all. Every
+          session is audited.</p>
+        </article>
+        <article class="card">
+          <h3>A hostile data stream cannot take over</h3>
+          <p>The 3270 protocol is parsed in memory-safe Rust without <code>unsafe</code> code,
+          fuzzed and property-tested. A malformed packet ends with an error, never with a
+          crash.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" class="section section-alt">
+    <div class="wrap">
+      <h2>How it works</h2>
+      <div class="flow" role="img"
+           aria-label="Browser sends keys to the gateway and receives a masked screen; the gateway talks TN3270E over TLS to IBM z/OS">
+        <div class="node">
+          <span class="node-title">Web browser</span>
+          <span class="node-sub">canvas client</span>
+        </div>
+        <div class="link">
+          <span>keys &amp; actions →</span>
+          <span>← masked screen</span>
+        </div>
+        <div class="node node-accent">
+          <span class="node-title">bastion3270 gateway</span>
+          <span class="node-sub">3270 session · field checks · masking · audit</span>
+        </div>
+        <div class="link">
+          <span>TN3270E over TLS</span>
+          <span>⇄</span>
+        </div>
+        <div class="node">
+          <span class="node-title">IBM z/OS</span>
+          <span class="node-sub">VTAM · TSO · ISPF · CICS</span>
+        </div>
+      </div>
+      <ul class="ticks">
+        <li><strong>Browser → gateway:</strong> keys, pasted text, cursor moves and function
+          keys, checked against the field attributes as a terminal would.</li>
+        <li><strong>Gateway → browser:</strong> the screen with every non-display field
+          blanked, the status line and messages.</li>
+        <li><strong>Gateway → mainframe:</strong> TN3270E over TLS 1.2 / 1.3, with optional
+          client certificates (mutual TLS).</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="features" class="section">
+    <div class="wrap">
+      <h2>Two products, one secure core</h2>
+      <div class="split">
+        <div>
+          <h3>Web gateway</h3>
+          <p>Runs the 3270 sessions in the data centre and serves them to a thin browser
+          client. Nothing to install on workstations.</p>
+          <ul class="ticks">
+            <li>Several sessions in tabs; survives a reload or a network drop</li>
+            <li>Copy, paste and print following the policy of each system</li>
+            <li>x3270 or IBM Personal Communications key layout, colour themes</li>
+            <li>Installable as an application from the browser</li>
+            <li>Thousands of sessions per process, denial-of-service limits</li>
+            <li>JSON audit log, Prometheus metrics, health and readiness probes</li>
+            <li>One static binary, non-root container image, Kubernetes manifests</li>
+          </ul>
+          <h3>Desktop client</h3>
+          <p>The same core in a native window for <strong>Windows, macOS and Linux</strong>,
+          with the same look and behaviour on each.</p>
+          <ul class="ticks">
+            <li>One small program, no runtime to install</li>
+            <li>Profiles that can be shared by a team</li>
+            <li>A clear dialog when a host certificate is not trusted</li>
+          </ul>
+        </div>
+        <figure class="shot">
+          <img src="/images/desktop-client.webp" width="1000" height="971" loading="lazy"
+               alt="The bastion3270 desktop client on Linux with a TSO session, key bar and status line">
+          <figcaption>The desktop client with the same TSO session on Linux.</figcaption>
+        </figure>
+      </div>
+
+      <h3>Terminal</h3>
+      <ul class="chips">
+        <li>TN3270 and TN3270E</li>
+        <li>Models 2–5 and custom sizes up to 62&nbsp;×&nbsp;160</li>
+        <li>Extended attributes and colours</li>
+        <li>SSCP-LU mode (VTAM logon screens)</li>
+        <li>35 EBCDIC code pages</li>
+        <li>Behaviour follows x3270</li>
+        <li>English and Czech user interface</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="compare" class="section section-alt">
+    <div class="wrap">
+      <h2>Compared with the usual alternatives</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th></th><th>bastion3270</th><th>Desktop emulator</th><th>Emulator in the browser</th></tr>
+          </thead>
+          <tbody>
+            <tr><th>Installed on every workstation</th><td class="good">no</td><td>yes</td><td>no</td></tr>
+            <tr><th>3270 protocol runs in</th><td class="good">the gateway</td><td>the workstation</td><td>the browser</td></tr>
+            <tr><th>Hidden field contents reach the user's device</th><td class="good">no</td><td>yes</td><td>yes</td></tr>
+            <tr><th>Which hosts a user may reach</th><td class="good">gateway policy</td><td>workstation network</td><td>browser / proxy</td></tr>
+            <tr><th>Central audit of sessions</th><td class="good">yes</td><td>no</td><td>depends</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="try" class="section">
+    <div class="wrap narrow">
+      <h2>Try it in five minutes</h2>
+      <p>You need Git and <a href="https://podman.io/">Podman</a> with
+      <code>podman-compose</code>, or Docker with Docker Compose. The stack runs the published
+      gateway image and a local <a href="https://sdl-hercules-390.github.io/html/">Hercules</a>
+      emulator with the free MVS&nbsp;3.8j “TK4-” system — no mainframe needed.</p>
+<pre><code>git clone https://github.com/tom-danek/bastion3270.git
+cd bastion3270
+podman-compose -f docker/docker-compose.yml up -d
+# or: docker compose -f docker/docker-compose.yml up -d</code></pre>
+      <ol class="steps">
+        <li>Open <code>http://127.0.0.1:8080</code>. The client connects to
+          <strong>Hercules MVS 3.8j (TK4-)</strong> at once.</li>
+        <li>MVS needs about a minute to start. On the TK4- logo press <strong>Clear</strong>
+          on the key bar under the screen.</li>
+        <li>At <code>Logon ===&gt;</code> type <code>HERC01</code> and press Enter.</li>
+        <li>Enter the password <code>CUL8TR</code> — it is not shown, and the gateway never
+          sends it back to the page — then press Enter until the menu appears.</li>
+      </ol>
+      <p>The <a href="https://github.com/tom-danek/bastion3270/blob/main/docs/USER_GUIDE.md">user
+      guide</a> explains the screen and the keys.</p>
+    </div>
+  </section>
+
+  <section id="download" class="section section-alt">
+    <div class="wrap">
+      <h2>Download</h2>
+      <div class="grid grid-3">
+        <article class="card">
+          <h3>Desktop client</h3>
+          <p>Linux x86_64 (glibc 2.28+: RHEL&nbsp;8+, SLES&nbsp;15+, Debian&nbsp;11+,
+          Ubuntu&nbsp;20.04+), Windows x86_64 and macOS on Apple Silicon (11+).</p>
+          <a class="btn btn-primary" href="https://github.com/tom-danek/bastion3270/releases/latest">Latest release</a>
+        </article>
+        <article class="card">
+          <h3>Gateway binary</h3>
+          <p>A static Linux binary for x86_64 and arm64 with an example configuration and a
+          configuration checker.</p>
+          <a class="btn" href="https://github.com/tom-danek/bastion3270/releases/latest">Latest release</a>
+        </article>
+        <article class="card">
+          <h3>Container image</h3>
+          <p>For <code>linux/amd64</code> and <code>linux/arm64</code>, with an SBOM and build
+          provenance.</p>
+<pre><code>docker pull ghcr.io/tom-danek/bastion3270-server:latest</code></pre>
+        </article>
+      </div>
+      <p class="note">Every release comes with <code>SHA256SUMS</code>, a CycloneDX SBOM and a
+      signed build provenance attestation for each file. The desktop builds are not
+      code-signed yet, so Windows SmartScreen and macOS Gatekeeper warn on first start.</p>
+    </div>
+  </section>
+
+  <section id="faq" class="section">
+    <div class="wrap narrow">
+      <h2>Questions</h2>
+      <details>
+        <summary>What is TN3270?</summary>
+        <p>TN3270 and its extension TN3270E are the Telnet-based protocols used to reach IBM
+        mainframe applications such as TSO, ISPF and CICS through 3270 “green screen”
+        terminals. A TN3270 emulator plays the role of the terminal.</p>
+      </details>
+      <details>
+        <summary>Does it work with z/OS?</summary>
+        <p>Yes. bastion3270 is built for IBM z/OS and is tested against the Hercules
+        emulator with MVS&nbsp;3.8j and with z/OS data streams in its regression tests.</p>
+      </details>
+      <details>
+        <summary>Is it free?</summary>
+        <p>Yes. bastion3270 is open source under the Apache License&nbsp;2.0, including
+        commercial use.</p>
+      </details>
+      <details>
+        <summary>Is it ready for production?</summary>
+        <p>It is pre-1.0. The protocol core, the web gateway and the desktop client are tested
+        extensively, including load tests of thousands of sessions per gateway, but the
+        configuration and the WebSocket protocol may still change between minor versions. See
+        the <a href="https://github.com/tom-danek/bastion3270/blob/main/CHANGELOG.md">changelog</a>.</p>
+      </details>
+      <details>
+        <summary>Who makes it?</summary>
+        <p>bastion3270 is developed by one author in their spare time, together with an AI
+        coding assistant. The author decides the design and reviews every change; all code
+        follows the same standards: no <code>unsafe</code>, no panics in production code,
+        behaviour that follows x3270 and the RFCs, and a regression test for every fix.</p>
+      </details>
+      <details>
+        <summary>How do I report a bug or ask for a feature?</summary>
+        <p>Open an <a href="https://github.com/tom-danek/bastion3270/issues">issue on
+        GitHub</a>. Please report security problems privately, as described in the
+        <a href="https://github.com/tom-danek/bastion3270/blob/main/SECURITY.md">security
+        policy</a>.</p>
+      </details>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <div>
+      <a class="brand" href="/"><img src="/favicon.svg" width="20" height="20" alt="">bastion3270</a>
+      <p>Licensed under the Apache License&nbsp;2.0.</p>
+    </div>
+    <nav aria-label="Footer">
+      <a href="https://github.com/tom-danek/bastion3270">Source code</a>
+      <a href="https://github.com/tom-danek/bastion3270#documentation">Documentation</a>
+      <a href="https://github.com/tom-danek/bastion3270/releases">Releases</a>
+      <a href="https://github.com/tom-danek/bastion3270/issues">Issues</a>
+    </nav>
+    <p class="legal">IBM and z/OS are trademarks of International Business Machines
+    Corporation. bastion3270 is an independent project and is not affiliated with or endorsed
+    by IBM.</p>
+  </div>
+</footer>
+
+</body>
+</html>
